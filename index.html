@@ -1,0 +1,2111 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>轻野徒步社</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'forest-green': '#2f5d3a',
+                        'amber': '#ed8936'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+            background: #f7f8fa;
+            color: #2f5d3a;
+            line-height: 1.5;
+            font-size: 13px;
+            font-weight: 400;
+        }
+        
+        .app-container {
+            max-width: 375px;
+            margin: 0 auto;
+            background: white;
+            min-height: 100vh;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .page {
+            display: none;
+            padding-bottom: 60px;
+            opacity: 0;
+            transform: translateX(30px);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        #community-page {
+            min-height: auto;
+        }
+        
+        .page.active {
+            display: block;
+            opacity: 1;
+            transform: translateX(0);
+        }
+        
+        #login-page {
+            padding-bottom: 0;
+        }
+        
+        #login-page.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .app-container.hide-nav .bottom-nav {
+            display: none !important;
+        }
+        
+        /* 绿色色系定义 */
+        :root {
+            --green-dark: #1f4e2a;     /* 深绿色 */
+            --green-medium: #3a7a4a;   /* 中绿色 */
+            --green-light: #4a9d5f;    /* 浅绿色 */
+            --green-pale: #e8f5e8;     /* 极浅绿色 */
+        }
+        
+        .header {
+            background: var(--green-dark);
+            color: white;
+            padding: 16px 20px 16px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+        
+        .header p {
+            font-size: 12px;
+            opacity: 0.8;
+        }
+        
+        .main-content {
+            padding: 0;
+            overflow: hidden;
+        }
+        
+        /* 广场、活动详情、我的页面增加18px内边距 */
+        #square-page .main-content,
+        #activity-detail-page .main-content,
+        #profile-page .main-content {
+            padding: 0 18px;
+        }
+        
+        /* 社团页面特殊布局 */
+        .community-header {
+            position: fixed;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 375px;
+            background: white;
+            z-index: 100;
+            padding: 20px 20px 0 20px;
+            box-sizing: border-box;
+        }
+
+        .community-header-content {
+            background: var(--green-dark);
+            color: white;
+            padding: 16px 20px 12px;
+            text-align: center;
+            border-radius: 8px 8px 0 0;
+        }
+
+        .community-header-content h1 {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+
+        .community-header-content p {
+            font-size: 12px;
+            opacity: 0.8;
+        }
+
+        .announcement {
+            background: var(--green-pale);
+            padding: 12px 16px;
+            border-radius: 0 0 8px 8px;
+        }
+
+        .announcement-title {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--green-dark);
+            margin-bottom: 4px;
+        }
+
+        .announcement-text {
+            font-size: 11px;
+            color: #4a5568;
+            line-height: 1.3;
+        }
+        
+        .activity-list-container {
+            /* padding和margin已移除，使用main-content的统一设置 */
+            /* margin-top: 16px; 移除以与其他页面保持一致 */
+        }
+        
+        /* 隐藏滚动条但保留滚动功能 */
+        .scroll-container {
+            -ms-overflow-style: none; /* IE 和 Edge */
+            scrollbar-width: none; /* Firefox */
+        }
+        
+        .scroll-container::-webkit-scrollbar {
+            display: none; /* Chrome、Safari 和 Opera */
+        }
+        
+        .section {
+            margin-bottom: 20px;
+        }
+        
+        .section-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--green-dark);
+            margin-bottom: 12px;
+            padding-top: 16px;
+        }
+        
+        .content-block {
+            background: white;
+            border: none;
+            margin-bottom: 8px;
+        }
+        
+        .tab-nav {
+            display: flex;
+            gap: 8px;
+            margin: 24px 0 20px;
+            padding: 0;
+            background: none;
+        }
+        
+        /* 隐藏滚动条但保留滚动功能 */
+        .scroll-container {
+            -ms-overflow-style: none; /* IE 和 Edge */
+            scrollbar-width: none; /* Firefox */
+        }
+        
+        .scroll-container::-webkit-scrollbar {
+            display: none; /* Chrome、Safari 和 Opera */
+        }
+        
+        .section {
+            margin-bottom: 20px;
+        }
+        
+        .section-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--green-dark);
+            margin-bottom: 12px;
+            padding-top: 16px;
+        }
+        
+        .content-block {
+            background: white;
+            border: none;
+            margin-bottom: 8px;
+        }
+        
+        .tab-item {
+            flex: 1;
+            text-align: center;
+            padding: 12px 16px;
+            font-size: 14px;
+            color: #718096;
+            cursor: pointer;
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+        
+        .tab-item.active {
+            color: white;
+            background: var(--green-dark);
+            border-color: var(--green-dark);
+            font-weight: 600;
+        }
+        
+        /* 活动列表页面样式 */
+        .activity-list-container {
+            padding: 0 20px;
+        }
+        
+        .activity-list-header {
+            background: var(--green-dark);
+            padding: 0;
+            margin: 0;
+        }
+        
+        .page-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: white;
+            margin: 0;
+            padding: 0 20px 6px;
+            text-align: center;
+        }
+        
+        .filter-tabs {
+            display: flex;
+            gap: 0;
+            background: transparent;
+            padding: 0 12px 8px;
+            border-radius: 0;
+        }
+        
+        .filter-tab {
+            flex: 1;
+            text-align: center;
+            padding: 6px 10px;
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.8);
+            cursor: pointer;
+            border-radius: 4px;
+            transition: all 0.2s;
+            background: rgba(255, 255, 255, 0.1);
+            margin: 0 2px;
+        }
+        
+        .filter-tab.active {
+            color: white;
+            background: rgba(255, 255, 255, 0.2);
+            font-weight: 600;
+        }
+        
+        .filter-tab.active {
+            background: white;
+            color: var(--green-dark);
+            font-weight: 500;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        
+        .activity-cards-grid {
+            display: grid;
+            gap: 16px;
+            margin: 6px 0 0 0; /* 活动卡片向下移动6px，移除活动卡片与页面左右边的距离 */
+        }
+        
+        /* 活动卡片样式 */
+        .activity-card {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+        }
+        
+        .activity-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            border-color: var(--green-light);
+        }
+        
+        .activity-header {
+            display: flex;
+            justify-content: between;
+            align-items: flex-start;
+            margin-bottom: 8px;
+        }
+        
+        .activity-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #2f5d3a;
+            line-height: 1.3;
+            flex: 1;
+            margin-right: 12px;
+        }
+        
+        .status-tag {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 500;
+            white-space: nowrap;
+        }
+        
+        .status-available {
+            background: var(--green-pale);
+            color: var(--green-dark);
+        }
+        
+        .status-full {
+            background: #fed7d7;
+            color: #c53030;
+        }
+        
+        .status-ended {
+            background: #e2e8f0;
+            color: #718096;
+        }
+        
+        .activity-details {
+            display: grid;
+            gap: 6px;
+            margin-bottom: 8px;
+        }
+        
+        .detail-item {
+            display: flex;
+            align-items: center;
+            font-size: 13px;
+            color: #4a5568;
+        }
+        
+        .detail-icon {
+            width: 16px;
+            height: 16px;
+            margin-right: 8px;
+            opacity: 0.6;
+        }
+        
+        .strength-rating {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        
+        .star {
+            color: #ed8936;
+            font-size: 12px;
+        }
+        
+        .activity-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 8px;
+            border-top: 1px solid #f7fafc;
+        }
+        
+        .participants {
+            font-size: 12px;
+            color: #718096;
+        }
+        
+        .price {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--green-dark);
+        }
+        }
+        
+        .status-ended {
+            background: #f8f9fa;
+            color: #9ca3af;
+        }
+        
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 12px 16px;
+            border: none;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 500;
+            text-align: center;
+            cursor: pointer;
+            transition: none;
+        }
+        
+        .btn-primary {
+            background: #2f5d3a;
+            color: white;
+        }
+        
+        .btn-secondary {
+            background: white;
+            color: #718096;
+            border: 1px solid #e2e8f0;
+        }
+        
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 375px;
+            background: white;
+            border-top: 1px solid var(--green-pale);
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            padding: 8px 12px;
+            box-sizing: border-box;
+        }
+        
+        .nav-item {
+            flex: 1;
+            text-align: center;
+            padding: 12px 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            color: #718096;
+            transition: all 0.2s;
+            border-radius: 6px;
+            max-width: 60px;
+        }
+        
+        .nav-item.active {
+            color: white;
+            background: var(--green-dark);
+            font-weight: 600;
+        }
+        
+        .publish-btn-nav {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: var(--green-dark);
+            color: white;
+            border: none;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 8px rgba(31, 78, 42, 0.3);
+            transition: all 0.2s;
+            flex-shrink: 0;
+        }
+        
+        .publish-btn-nav:hover {
+            background: #1a4325;
+            transform: scale(1.05);
+        }
+        
+        .status-badge {
+            padding: 1px 4px;
+            border-radius: 8px;
+            font-size: 10px;
+            font-weight: 500;
+        }
+        
+        .status-badge.available {
+            background: #f0f8f0;
+            color: #2f5d3a;
+        }
+        
+        .status-badge.full {
+            background: #e8f5e8;
+            color: #3a7a4a;
+        }
+        
+        .status-badge.ended {
+            background: #f7fafc;
+            color: #718096;
+        }
+        
+        .role-badge {
+            padding: 1px 4px;
+            border-radius: 8px;
+            font-size: 10px;
+            font-weight: 500;
+        }
+        
+        .role-admin {
+            background: #f0f8f0;
+            color: #2f5d3a;
+        }
+        
+        .role-leader {
+            background: #e8f5e8;
+            color: #3a7a4a;
+        }
+        
+        .role-member {
+            background: #f0f0f0;
+            color: #4a5568;
+        }
+        
+        .member-item {
+            display: flex;
+            align-items: center;
+            background: white;
+            border: 1px solid #f0f0f0;
+            border-radius: 4px;
+            padding: 12px 16px;
+            margin-bottom: 8px;
+        }
+        
+        .member-item:last-child {
+            margin-bottom: 0 !important;
+        }
+        
+        .avatar {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: #f0f0f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #718096;
+            font-size: 11px;
+            margin-right: 8px;
+        }
+        
+        .member-name {
+            font-size: 12px;
+            color: #2d3748;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.4);
+            z-index: 1000;
+        }
+        
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: 4px;
+            padding: 16px;
+            margin: 20px;
+            max-width: 320px;
+            width: 100%;
+        }
+        
+        .modal-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--green-dark);
+            margin-bottom: 12px;
+            text-align: center;
+        }
+        
+        .modal-header {
+            text-align: center;
+            margin-bottom: 16px;
+        }
+        
+        .modal-header h3 {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--green-dark);
+        }
+        
+        .qr-placeholder {
+            width: 120px;
+            height: 120px;
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #718096;
+            font-size: 10px;
+            margin: 12px auto;
+        }
+        
+        .divider {
+            height: 1px;
+            background: #f0f0f0;
+            margin: 12px 0;
+        }
+        
+        .input-group {
+            margin-bottom: 12px;
+        }
+        
+        .input-label {
+            display: block;
+            margin-bottom: 4px;
+            font-size: 12px;
+            color: #4a5568;
+        }
+        
+        .input-field {
+            width: 100%;
+            padding: 8px 10px;
+            border: 1px solid #e2e8f0;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 24px 8px;
+            color: #a0aec0;
+        }
+        
+        .empty-state span {
+            display: block;
+            font-size: 20px;
+            margin-bottom: 8px;
+            opacity: 0.5;
+        }
+        
+        .empty-state p {
+            font-size: 12px;
+        }
+        
+        .info-list {
+            margin-bottom: 8px;
+        }
+        
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 6px 0;
+            border-bottom: 1px solid #f7fafc;
+            font-size: 11px;
+        }
+        
+        .info-item:last-child {
+            border-bottom: none;
+        }
+        
+        .info-label {
+            color: #718096;
+        }
+        
+        .info-value {
+            color: #2d3748;
+        }
+        
+        .strength-rating {
+            display: flex;
+            align-items: center;
+            gap: 1px;
+        }
+        
+        .strength-star {
+            color: #ed8936;
+            font-size: 10px;
+        }
+        
+        .strength-star.empty {
+            color: #e2e8f0;
+        }
+        
+        .member-avatars {
+            display: flex;
+            margin: 6px 0;
+        }
+        
+        .member-avatar {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: #f0f0f0;
+            border: 1px solid white;
+            margin-left: -4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #718096;
+            font-size: 9px;
+        }
+        
+        .member-avatar:first-child {
+            margin-left: 0;
+        }
+        
+        .disclaimer {
+            background: #fafbfc;
+            padding: 8px;
+            border-radius: 4px;
+            border: 1px solid #f0f0f0;
+            margin-top: 12px;
+        }
+        
+        .disclaimer h4 {
+            font-size: 11px;
+            font-weight: 600;
+            color: #718096;
+            margin-bottom: 4px;
+        }
+        
+        .disclaimer p {
+            font-size: 10px;
+            color: #a0aec0;
+            line-height: 1.3;
+        }
+        
+        .announcement {
+            background: #f8f9fa;
+            padding: 16px 20px;
+            margin: 16px 0 24px;
+            border-radius: 6px;
+            border-left: 3px solid #e2e8f0;
+        }
+
+        .announcement-title {
+            font-size: 13px;
+            font-weight: 500;
+            color: #4a5568;
+            margin-bottom: 6px;
+        }
+
+        .announcement-text {
+            font-size: 14px;
+            color: #2d3748;
+            line-height: 1.5;
+        }
+        
+        .page-bottom-action {
+            position: fixed;
+            bottom: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 375px;
+            padding: 0 20px;
+            z-index: 1000;
+        }
+        
+        .organizer-info {
+            display: flex;
+            align-items: center;
+            padding: 6px 0;
+            border-top: 1px solid #f7fafc;
+            margin-top: 8px;
+        }
+        
+        .organizer-avatar {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #f0f0f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #718096;
+            font-size: 9px;
+            margin-right: 6px;
+        }
+        
+        .organizer-name {
+            font-size: 11px;
+            color: #718096;
+        }
+        
+        .user-profile {
+            background: white;
+            border: none;
+            padding: 0;
+            margin-bottom: 12px;
+        }
+        
+        .profile-info {
+            display: flex;
+            align-items: center;
+        }
+        
+        .profile-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #f0f0f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #718096;
+            font-size: 12px;
+            margin-right: 8px;
+        }
+        
+        .profile-details h3 {
+            font-size: 14px;
+            color: #1a202c;
+            margin-bottom: 1px;
+        }
+        
+        .profile-details p {
+            font-size: 11px;
+            color: #718096;
+        }
+        
+        .setting-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #f7fafc;
+            cursor: pointer;
+        }
+        
+        .setting-item:last-child {
+            border-bottom: none;
+        }
+        
+        .setting-text {
+            font-size: 12px;
+            color: #4a5568;
+        }
+        
+        .setting-arrow {
+            color: #cbd5e0;
+            font-size: 10px;
+        }
+        
+        @media (max-width: 375px) {
+            .app-container {
+                border-radius: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- 登录页 -->
+        <div id="login-page" class="page active">
+            <div style="display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: calc(100vh - 80px); padding: 40px 20px;">
+                <!-- Logo图标 -->
+                <div style="width: 64px; height: 64px; background: #2f5d3a; border-radius: 8px; margin-bottom: 24px; display: flex; align-items: center; justify-content: center; color: white; font-size: 28px;">
+                    🏔️
+                </div>
+                
+                <!-- 标题和副标题 -->
+                <div style="text-align: center; margin-bottom: 40px;">
+                    <h1 style="font-size: 20px; font-weight: 600; color: var(--green-dark); margin-bottom: 8px;">轻野徒步社</h1>
+                    <p style="font-size: 14px; color: #718096; line-height: 1.4;">与志同道合的朋友一起探索自然</p>
+                </div>
+                
+                <!-- 登录按钮 -->
+                <div style="width: 100%; max-width: 280px; margin-bottom: 32px;">
+                    <button class="btn btn-primary" onclick="loginWithWeChat()" style="margin-bottom: 12px;">
+                        微信一键登录
+                    </button>
+                    <button class="btn btn-secondary" onclick="showPhoneLogin()">
+                        手机号登录
+                    </button>
+                </div>
+                
+                <!-- 用户协议 -->
+                <div style="text-align: center; font-size: 12px; color: #a0aec0; line-height: 1.5;">
+                    登录即表示同意<br>
+                    <a href="#" style="color: #2f5d3a; text-decoration: none;">《用户协议》</a> 和 
+                    <a href="#" style="color: #2f5d3a; text-decoration: none;">《隐私政策》</a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 社团主页 -->
+        <div id="community-page" class="page">
+            <div class="header">
+                <!-- 活动列表标题和筛选 -->
+                <div class="activity-list-header">
+                    <h2 class="page-title">活动列表</h2>
+                    <div class="filter-tabs">
+                        <div class="filter-tab active" onclick="filterActivities('all')">全部</div>
+                        <div class="filter-tab" onclick="filterActivities('available')">可报名</div>
+                        <div class="filter-tab" onclick="filterActivities('upcoming')">即将开始</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="main-content">
+                <div class="scroll-container" style="overflow-y: auto; overflow-x: hidden; height: calc(100vh - 140px); margin-top: 6px;">
+                    <!-- 活动列表区域 -->
+                    <div class="activity-list-container">
+                        <!-- 活动卡片列表 -->
+                        <div id="activity-list" class="activity-cards-grid">
+                            <!-- 活动卡片将通过JavaScript动态生成 -->
+                        </div>
+                        
+                        <!-- 成员列表（隐藏） -->
+                        <div id="members-tab" style="display: none;">
+                            <div id="member-list"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 广场页面 -->
+        <div id="square-page" class="page">
+            <div class="header">
+                <h1>广场</h1>
+                <p>查看成员分享的图文内容</p>
+            </div>
+            
+            <div class="main-content">
+                <div id="square-content" class="scroll-container" style="overflow-y: auto; overflow-x: hidden; height: calc(100vh - 140px); margin-top: 6px;">
+                    <!-- 动态内容将在这里插入 -->
+                </div>
+            </div>
+        </div>
+        
+        <!-- 活动详情页 -->
+        <div id="activity-detail-page" class="page">
+            <div class="header">
+                <h1>活动详情</h1>
+                <p>查看活动信息并参与报名</p>
+            </div>
+            
+            <div class="main-content">
+                <div id="activity-detail-content" class="scroll-container" style="overflow-y: auto; overflow-x: hidden; height: calc(100vh - 140px);">
+                    <!-- 动态内容将在这里插入 -->
+                </div>
+            </div>
+            
+            <!-- 活动操作按钮 -->
+            <div id="activity-actions" class="page-bottom-action">
+                <button id="join-btn" class="btn btn-primary">立即报名</button>
+            </div>
+        </div>
+        
+        <!-- 我的页面 -->
+        <div id="profile-page" class="page">
+            <div class="header">
+                <h1>个人中心</h1>
+                <p>管理个人信息和活动记录</p>
+            </div>
+            
+            <div class="main-content">
+                <div class="scroll-container" style="overflow-y: auto; overflow-x: hidden; height: calc(100vh - 140px); margin-top: 6px;">
+                    <!-- 用户信息 -->
+                <div class="user-profile">
+                    <div class="profile-info">
+                        <div class="profile-avatar">张</div>
+                        <div class="profile-details">
+                            <h3>张三</h3>
+                            <p>轻野徒步社</p>
+                        </div>
+                        <span class="role-badge role-admin">管理员</span>
+                    </div>
+                </div>
+                
+                <!-- 我的活动 -->
+                <div class="content-block">
+                    <div class="section-title">我的活动</div>
+                    
+                    <div class="section">
+                        <div style="font-size: 12px; font-weight: 500; color: #718096; margin-bottom: 8px;">我报名的活动</div>
+                        <div id="joined-activities"></div>
+                    </div>
+                    
+                    <div class="section">
+                        <div style="font-size: 12px; font-weight: 500; color: #718096; margin-bottom: 8px;">我发布的活动</div>
+                        <div id="published-activities"></div>
+                    </div>
+                </div>
+                
+                <!-- 设置 -->
+                <div class="content-block">
+                    <div class="section-title">设置</div>
+                    
+                    <div class="setting-item" onclick="showFeedback()">
+                        <span class="setting-text">意见反馈</span>
+                        <span class="setting-arrow">→</span>
+                    </div>
+                    <div class="setting-item">
+                        <span class="setting-text">用户协议</span>
+                        <span class="setting-arrow">→</span>
+                    </div>
+                    <div class="setting-item" onclick="logout()">
+                        <span class="setting-text" style="color: #3a7a4a;">退出登录</span>
+                        <span class="setting-arrow">→</span>
+                    </div>
+                </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 底部导航 -->
+        <div class="bottom-nav">
+            <div class="nav-item active" onclick="switchPage('community')">
+                <span>首页</span>
+            </div>
+            <div class="nav-item" onclick="switchPage('square')">
+                <span>广场</span>
+            </div>
+            <button class="publish-btn-nav" onclick="showPublishModal()" title="发布内容">+</button>
+            <div class="nav-item" onclick="switchPage('activity-detail')">
+                <span>活动</span>
+            </div>
+            <div class="nav-item" onclick="switchPage('profile')">
+                <span>我的</span>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 报名确认弹窗 -->
+    <div id="join-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>活动报名确认</h3>
+            </div>
+            
+            <div id="join-activity-info" style="margin-bottom: 16px;">
+                <!-- 活动信息将在这里插入 -->
+            </div>
+            
+            <div style="background: #f8f9fa; padding: 12px; border-radius: 4px; margin-bottom: 16px;">
+                <h4 style="font-size: 12px; font-weight: 600; color: var(--green-dark); margin-bottom: 6px;">支付说明</h4>
+                <p style="font-size: 11px; color: #718096; line-height: 1.4; margin-bottom: 12px;">
+                    平台不参与任何金钱交易，请通过下方微信二维码向活动发布者完成支付，支付备注请填写你的昵称。
+                </p>
+                
+                <div style="text-align: center;">
+                    <div class="qr-placeholder">微信收款二维码</div>
+                    <p style="font-size: 10px; color: #a0aec0;">发布者：张三</p>
+                </div>
+            </div>
+            
+            <div style="display: flex; gap: 8px;">
+                <button class="btn btn-secondary" onclick="closeJoinModal()" style="flex: 1;">取消</button>
+                <button class="btn btn-primary" onclick="confirmPayment()" style="flex: 1;">我已完成支付</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 手机号登录弹窗 -->
+    <div id="phone-login-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>手机号登录</h3>
+            </div>
+            
+            <div class="input-group">
+                <label class="input-label">手机号</label>
+                <input type="tel" placeholder="请输入手机号" id="phone-input" class="input-field">
+            </div>
+            
+            <div class="input-group">
+                <label class="input-label">验证码</label>
+                <div style="display: flex; gap: 6px;">
+                    <input type="text" placeholder="请输入验证码" id="code-input" class="input-field" style="flex: 1;">
+                    <button class="btn btn-secondary" style="width: auto; padding: 8px 12px; font-size: 12px;">获取验证码</button>
+                </div>
+            </div>
+            
+            <div class="divider"></div>
+            
+            <div style="display: flex; gap: 8px;">
+                <button class="btn btn-secondary" onclick="closePhoneLogin()" style="flex: 1;">取消</button>
+                <button class="btn btn-primary" onclick="phoneLogin()" style="flex: 1;">登录</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Mock数据
+        let currentUser = {
+            name: '张三',
+            role: 'admin', // admin, leader, member
+            phone: '13800138000'
+        };
+        
+        let currentActivity = null;
+        
+        // 扩展活动数据，支持无限滚动
+        const activitiesMasterList = [
+            {
+                id: 1,
+                title: '黄山日出徒步',
+                date: '2024-03-15',
+                time: '04:30',
+                location: '安徽黄山风景区',
+                strength: 4,
+                maxParticipants: 20,
+                currentParticipants: 12,
+                status: 'available',
+                description: '探索黄山绝美日出，感受大自然的神奇魅力。包含专业向导、早餐和登山杖租赁。',
+                equipment: '舒适的登山鞋、保暖衣物、足够的水和食物',
+                cost: '费用：299元/人，包含早餐、登山杖租赁',
+                organizer: {
+                    name: '李四',
+                    avatar: '李'
+                },
+                registeredMembers: [
+                    { name: '张三', avatar: '张' },
+                    { name: '李四', avatar: '李' },
+                    { name: '王五', avatar: '王' },
+                    { name: '赵六', avatar: '赵' },
+                    { name: '孙七', avatar: '孙' }
+                ]
+            },
+            {
+                id: 2,
+                title: '泰山夜爬观日出',
+                date: '2024-03-20',
+                time: '22:00',
+                location: '山东泰山',
+                strength: 5,
+                maxParticipants: 15,
+                currentParticipants: 15,
+                status: 'full',
+                description: '夜爬泰山，在泰山顶观看日出，体验登临天下小的心境。',
+                equipment: '强光手电筒、防风外套、登山杖、充足的水',
+                cost: '费用：199元/人，包含导游服务',
+                organizer: {
+                    name: '王五',
+                    avatar: '王'
+                },
+                registeredMembers: []
+            },
+            {
+                id: 3,
+                title: '西湖环湖徒步',
+                date: '2024-03-10',
+                time: '08:00',
+                location: '杭州西湖',
+                strength: 2,
+                maxParticipants: 25,
+                currentParticipants: 8,
+                status: 'available',
+                description: '轻松愉快的西湖环湖徒步，欣赏春日美景，适合所有水平的参与者。',
+                equipment: '舒适的步行鞋、帽子、防晒霜',
+                cost: '费用：50元/人，包含保险',
+                organizer: {
+                    name: '赵六',
+                    avatar: '赵'
+                },
+                registeredMembers: []
+            },
+            // 新增活动数据
+            {
+                id: 4,
+                title: '长城徒步挑战',
+                date: '2024-03-25',
+                time: '07:00',
+                location: '北京八达岭长城',
+                strength: 4,
+                maxParticipants: 30,
+                currentParticipants: 18,
+                status: 'available',
+                description: '挑战万里长城，感受古代建筑的雄伟，途经多个烽火台。',
+                equipment: '舒适登山鞋、防风外套、充足的水和高能量食物',
+                cost: '费用：150元/人，包含往返交通和保险',
+                organizer: {
+                    name: '张三',
+                    avatar: '张'
+                },
+                registeredMembers: []
+            },
+            {
+                id: 5,
+                title: '张家界天门山徒步',
+                date: '2024-04-01',
+                time: '06:00',
+                location: '湖南张家界',
+                strength: 5,
+                maxParticipants: 12,
+                currentParticipants: 5,
+                status: 'available',
+                description: '探索张家界奇峰异石，挑战天门山徒步线路，风景壮丽。',
+                equipment: '专业登山装备、防滑登山鞋、登山杖',
+                cost: '费用：399元/人，包含缆车、住宿和导游',
+                organizer: {
+                    name: '李四',
+                    avatar: '李'
+                },
+                registeredMembers: []
+            },
+            {
+                id: 6,
+                title: '青海湖环湖骑行',
+                date: '2024-04-10',
+                time: '08:00',
+                location: '青海湖',
+                strength: 3,
+                maxParticipants: 20,
+                currentParticipants: 12,
+                status: 'available',
+                description: '环青海湖骑行，欣赏高原湖泊美景，体验藏族文化。',
+                equipment: '自行车（可租赁）、防晒用品、保暖衣物',
+                cost: '费用：580元/人，包含自行车租赁和住宿',
+                organizer: {
+                    name: '王五',
+                    avatar: '王'
+                },
+                registeredMembers: []
+            },
+            {
+                id: 7,
+                title: '九寨沟春游徒步',
+                date: '2024-04-15',
+                time: '07:30',
+                location: '四川九寨沟',
+                strength: 3,
+                maxParticipants: 25,
+                currentParticipants: 8,
+                status: 'available',
+                description: '春季九寨沟徒步，欣赏冰雪融化后的彩池和瀑布。',
+                equipment: '防水登山鞋、防风外套、相机',
+                cost: '费用：320元/人，包含门票和景区交通',
+                organizer: {
+                    name: '赵六',
+                    avatar: '赵'
+                },
+                registeredMembers: []
+            },
+            {
+                id: 8,
+                title: '桂林阳朔徒步',
+                date: '2024-04-20',
+                time: '08:00',
+                location: '广西桂林阳朔',
+                strength: 2,
+                maxParticipants: 35,
+                currentParticipants: 22,
+                status: 'available',
+                description: '桂林山水甲天下，阳朔山水甲桂林，徒步欣赏喀斯特地貌。',
+                equipment: '舒适徒步鞋、防晒用品、雨具',
+                cost: '费用：180元/人，包含竹筏漂流',
+                organizer: {
+                    name: '孙七',
+                    avatar: '孙'
+                },
+                registeredMembers: []
+            },
+            {
+                id: 9,
+                title: '华山登山挑战',
+                date: '2024-04-25',
+                time: '05:00',
+                location: '陕西华山',
+                strength: 5,
+                maxParticipants: 15,
+                currentParticipants: 9,
+                status: 'available',
+                description: '挑战华山五峰，体验华山论剑的武侠情怀，观赏日出云海。',
+                equipment: '专业登山装备、手套、防滑鞋、头灯',
+                cost: '费用：280元/人，包含门票和导游',
+                organizer: {
+                    name: '周八',
+                    avatar: '周'
+                },
+                registeredMembers: []
+            },
+            {
+                id: 10,
+                title: '泰山夜爬观日出',
+                date: '2024-05-01',
+                time: '22:00',
+                location: '山东泰山',
+                strength: 4,
+                maxParticipants: 20,
+                currentParticipants: 6,
+                status: 'available',
+                description: '夜爬泰山，在泰山顶观看日出，体验登临天下小的心境。',
+                equipment: '强光手电筒、防风外套、登山杖、充足的水',
+                cost: '费用：199元/人，包含导游服务',
+                organizer: {
+                    name: '吴九',
+                    avatar: '吴'
+                },
+                registeredMembers: []
+            },
+            {
+                id: 11,
+                title: '张家界金鞭溪徒步',
+                date: '2024-05-05',
+                time: '08:30',
+                location: '湖南张家界',
+                strength: 3,
+                maxParticipants: 18,
+                currentParticipants: 7,
+                status: 'available',
+                description: '金鞭溪徒步，清澈溪流，奇峰林立，负氧离子丰富。',
+                equipment: '防滑鞋、防蚊液、防晒用品',
+                cost: '费用：220元/人，包含门票和导游',
+                organizer: {
+                    name: '郑十',
+                    avatar: '郑'
+                },
+                registeredMembers: []
+            },
+            {
+                id: 12,
+                title: '庐山三叠泉徒步',
+                date: '2024-05-10',
+                time: '07:00',
+                location: '江西庐山',
+                strength: 4,
+                maxParticipants: 25,
+                currentParticipants: 14,
+                status: 'available',
+                description: '庐山三叠泉瀑布徒步，层层叠叠，气势磅礴。',
+                equipment: '登山鞋、雨衣、充足的水',
+                cost: '费用：160元/人，包含门票',
+                organizer: {
+                    name: '钱一',
+                    avatar: '钱'
+                },
+                registeredMembers: []
+            },
+            {
+                id: 13,
+                title: '峨眉山徒步朝圣',
+                date: '2024-05-15',
+                time: '06:30',
+                location: '四川峨眉山',
+                strength: 4,
+                maxParticipants: 20,
+                currentParticipants: 11,
+                status: 'available',
+                description: '峨眉山徒步朝圣之旅，金顶看日出，体验佛教文化。',
+                equipment: '登山杖、防风外套、护膝',
+                cost: '费用：280元/人，包含缆车和住宿',
+                organizer: {
+                    name: '钱二',
+                    avatar: '钱'
+                },
+                registeredMembers: []
+            },
+            {
+                id: 14,
+                title: '黄山后山徒步',
+                date: '2024-05-20',
+                time: '07:00',
+                location: '安徽黄山风景区',
+                strength: 4,
+                maxParticipants: 15,
+                currentParticipants: 4,
+                status: 'available',
+                description: '黄山后山徒步线路，人少景美，深度体验黄山之美。',
+                equipment: '登山鞋、雨具、防寒衣物',
+                cost: '费用：320元/人，包含门票和导游',
+                organizer: {
+                    name: '钱三',
+                    avatar: '钱'
+                },
+                registeredMembers: []
+            },
+            {
+                id: 15,
+                title: '武功山草甸徒步',
+                date: '2024-05-25',
+                time: '08:00',
+                location: '江西武功山',
+                strength: 3,
+                maxParticipants: 30,
+                currentParticipants: 19,
+                status: 'available',
+                description: '武功山高山草甸徒步，万亩草甸，视野开阔。',
+                equipment: '登山鞋、防风衣、帽子',
+                cost: '费用：120元/人，包含交通',
+                organizer: {
+                    name: '钱四',
+                    avatar: '钱'
+                },
+                registeredMembers: []
+            }
+        ];
+
+        // 无限滚动相关变量
+        let currentPage = 0;
+        const activitiesPerPage = 5;
+        let isLoading = false;
+        let hasMoreActivities = true;
+        let activities = [];
+        
+        const members = [
+            { name: '张三', role: 'admin', avatar: '张' },
+            { name: '李四', role: 'leader', avatar: '李' },
+            { name: '王五', role: 'leader', avatar: '王' },
+            { name: '赵六', role: 'member', avatar: '赵' },
+            { name: '孙七', role: 'member', avatar: '孙' },
+            { name: '周八', role: 'member', avatar: '周' },
+            { name: '吴九', role: 'member', avatar: '吴' },
+            { name: '郑十', role: 'member', avatar: '郑' }
+        ];
+        
+        // 页面切换
+        function switchPage(pageName) {
+            const currentActivePage = document.querySelector('.page.active');
+            const targetPage = document.getElementById(pageName + '-page');
+            
+            if (!targetPage || currentActivePage === targetPage) return;
+            
+            // 隐藏当前页面
+            currentActivePage.classList.remove('active');
+            
+            // 延迟显示新页面以创建滑动效果
+            setTimeout(() => {
+                targetPage.classList.add('active');
+            }, 50);
+            
+            // 更新底部导航状态
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            if (pageName === 'community') {
+                document.querySelectorAll('.nav-item')[0].classList.add('active');
+            } else if (pageName === 'square') {
+                document.querySelectorAll('.nav-item')[1].classList.add('active');
+            } else if (pageName === 'activity-detail') {
+                document.querySelectorAll('.nav-item')[2].classList.add('active');
+            } else if (pageName === 'profile') {
+                document.querySelectorAll('.nav-item')[3].classList.add('active');
+            }
+            
+            // 加载对应页面的数据
+            if (pageName === 'community') {
+                loadCommunityData();
+            } else if (pageName === 'square') {
+                loadSquareData();
+            } else if (pageName === 'profile') {
+                loadProfileData();
+            } else if (pageName === 'activity-detail' && currentActivity) {
+                // 活动详情页已有数据，无需额外加载
+            }
+        }
+        
+        // 加载社团数据
+        function loadCommunityData() {
+            loadActivityList();
+            loadMemberList();
+        }
+        
+        // 初始化活动列表
+        function loadActivityList() {
+            // 重置状态
+            currentPage = 0;
+            activities = [];
+            hasMoreActivities = true;
+            isLoading = false;
+            
+            const container = document.getElementById('activity-list');
+            container.innerHTML = '';
+            
+            // 移除旧的加载提示
+            const oldLoadingIndicator = document.getElementById('loading-indicator');
+            if (oldLoadingIndicator) {
+                oldLoadingIndicator.remove();
+            }
+            
+            // 直接加载所有活动数据
+            activities = activitiesMasterList;
+            
+            // 渲染活动列表
+            renderActivityList();
+        }
+
+
+
+        // 活动筛选功能
+        function filterActivities(filterType) {
+            // 更新筛选标签状态
+            document.querySelectorAll('.filter-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // 激活当前筛选标签
+            const activeTab = document.querySelector(`.filter-tab[onclick*="'${filterType}'"]`);
+            if (activeTab) {
+                activeTab.classList.add('active');
+            }
+            
+            // 根据筛选类型过滤活动
+            let filteredActivities = activitiesMasterList;
+            
+            switch(filterType) {
+                case 'available':
+                    filteredActivities = activitiesMasterList.filter(activity => activity.status === 'available');
+                    break;
+                case 'upcoming':
+                    // 筛选即将开始的活动（未来7天内）
+                    const today = new Date();
+                    const nextWeek = new Date(today.getTime() + 7 * 24 * 60 * 60 * 1000);
+                    filteredActivities = activitiesMasterList.filter(activity => {
+                        const activityDate = new Date(activity.date);
+                        return activityDate >= today && activityDate <= nextWeek;
+                    });
+                    break;
+                case 'all':
+                default:
+                    filteredActivities = activitiesMasterList;
+                    break;
+            }
+            
+            // 更新活动列表
+            activities = filteredActivities;
+            renderActivityList();
+        }
+
+        // 渲染活动列表
+        function renderActivityList() {
+            const container = document.getElementById('activity-list');
+            container.innerHTML = '';
+            
+            activities.forEach(activity => {
+                const date = new Date(activity.date);
+                const weekDays = ['日', '一', '二', '三', '四', '五', '六'];
+                const weekDay = weekDays[date.getDay()];
+                const statusClass = activity.status === 'available' ? 'status-available' : 
+                                  activity.status === 'full' ? 'status-full' : 'status-ended';
+                const statusText = activity.status === 'available' ? '可报名' : 
+                                 activity.status === 'full' ? '已满员' : '已截止';
+                
+                // 生成星星评级
+                const stars = '★'.repeat(activity.strength) + '☆'.repeat(5 - activity.strength);
+                
+                const activityCard = document.createElement('div');
+                activityCard.className = 'activity-card';
+                activityCard.onclick = () => showActivityDetail(activity.id);
+                
+                activityCard.innerHTML = `
+                    <div class="activity-header">
+                        <div class="activity-title">${activity.title}</div>
+                        <span class="status-tag ${statusClass}">${statusText}</span>
+                    </div>
+                    <div class="activity-details">
+                        <div class="detail-item">
+                            <span>${activity.date} 周${weekDay} ${activity.time}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span>${activity.location}</span>
+                        </div>
+                        <div class="detail-item">
+                            <div class="strength-rating">
+                                <span class="star">${stars}</span>
+                                <span>强度 ${activity.strength}/5</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="activity-footer">
+                        <span class="participants">${activity.currentParticipants}/${activity.maxParticipants}人</span>
+                        <span class="price">${activity.cost}</span>
+                    </div>
+                `;
+                
+                container.appendChild(activityCard);
+            });
+        }
+
+
+        
+        // 加载成员列表
+        function loadMemberList() {
+            const container = document.getElementById('member-list');
+            container.innerHTML = members.map(member => {
+                const roleClass = member.role === 'admin' ? 'role-admin' : 
+                                member.role === 'leader' ? 'role-leader' : 'role-member';
+                const roleText = member.role === 'admin' ? '管理员' : 
+                               member.role === 'leader' ? '领队' : '成员';
+                
+                return `
+                    <div class="member-item">
+                        <div class="avatar">${member.avatar}</div>
+                        <div style="flex: 1;">
+                            <div style="font-weight: 500; color: var(--green-dark);">${member.name}</div>
+                            <span class="role-tag ${roleClass}">${roleText}</span>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        // Tab切换
+        function switchTab(tabName) {
+            // 更新Tab状态
+            document.querySelectorAll('.tab-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            // 显示/隐藏对应内容
+            document.getElementById('activities-tab').style.display = tabName === 'activities' ? 'block' : 'none';
+            document.getElementById('members-tab').style.display = tabName === 'members' ? 'block' : 'none';
+        }
+        
+        // 显示活动详情
+        function showActivityDetail(activityId) {
+            // 从完整列表中查找活动
+            const activity = activitiesMasterList.find(a => a.id === activityId);
+            if (!activity) return;
+            
+            currentActivity = activity;
+            const container = document.getElementById('activity-detail-content');
+            
+            const date = new Date(activity.date);
+            const weekDays = ['日', '一', '二', '三', '四', '五', '六'];
+            const weekDay = weekDays[date.getDay()];
+            
+            container.innerHTML = `
+                <div class="card" style="border: 1px solid #f0f0f0; border-radius: 4px; padding: 12px; margin-bottom: 8px;">
+                    <h2 style="font-size: 16px; font-weight: 600; color: var(--green-dark); margin-bottom: 16px;">${activity.title}</h2>
+                    
+                    <div class="activity-meta">
+                        <span>时间：${activity.date} 周${weekDay} ${activity.time}</span>
+                        <span>地点：${activity.location}</span>
+                        <span>人数：${activity.currentParticipants}/${activity.maxParticipants}人</span>
+                    </div>
+                    
+                    <div style="margin: 8px 0;">
+                        <span style="color: #718096; margin-right: 6px; font-size: 12px;">强度等级：</span>
+                        <span class="strength-stars">${'★'.repeat(activity.strength)}${'☆'.repeat(5 - activity.strength)}</span>
+                    </div>
+                </div>
+                
+                <div class="card" style="border: 1px solid #f0f0f0; border-radius: 4px; padding: 12px; margin-bottom: 8px;">
+                    <h3 style="font-size: 14px; font-weight: 600; color: var(--green-dark); margin-bottom: 8px;">活动介绍</h3>
+                    <p style="color: #4a5568; line-height: 1.4; margin-bottom: 12px; font-size: 12px;">${activity.description}</p>
+                    
+                    <h4 style="font-size: 12px; font-weight: 600; color: var(--green-dark); margin-bottom: 6px;">装备要求</h4>
+                    <p style="color: #4a5568; line-height: 1.4; margin-bottom: 12px; font-size: 12px;">${activity.equipment}</p>
+                    
+                    <h4 style="font-size: 12px; font-weight: 600; color: var(--green-dark); margin-bottom: 6px;">费用说明</h4>
+                    <p style="color: #4a5568; line-height: 1.4; font-size: 12px;">${activity.cost}</p>
+                </div>
+                
+                <div class="card" style="border: 1px solid #f0f0f0; border-radius: 4px; padding: 12px; margin-bottom: 8px;">
+                    <h3 style="font-size: 14px; font-weight: 600; color: var(--green-dark); margin-bottom: 8px;">已报名成员</h3>
+                    <p style="color: #718096; margin-bottom: 8px; font-size: 12px;">${activity.currentParticipants}/${activity.maxParticipants}人</p>
+                    
+                    <div class="member-avatars">
+                        ${activity.registeredMembers.map(member => `
+                            <div class="member-avatar" title="${member.name}">${member.avatar}</div>
+                        `).join('')}
+                        ${activity.currentParticipants > activity.registeredMembers.length ? 
+                            `<div class="member-avatar" style="background: #e2e8f0; color: #718096;">+${activity.currentParticipants - activity.registeredMembers.length}</div>` : ''
+                        }
+                    </div>
+                    
+                    ${(currentUser.role === 'admin' || currentUser.role === 'leader') ? 
+                        '<p style="color: #2f5d3a; font-size: 12px; cursor: pointer;">查看完整名单 →</p>' : ''
+                    }
+                </div>
+                
+                <div class="disclaimer">
+                    <h4>免责声明</h4>
+                    <p>参与户外活动存在一定风险，请参与者充分了解活动内容和潜在风险，自愿参加。组织者已购买相关保险，但仍需参与者注意自身安全，听从领队指挥。</p>
+                </div>
+                
+                <!-- 添加100px空白区域以增加滚动距离 -->
+                <div style="height: 100px;"></div>
+            `;
+            
+            // 更新按钮状态
+            const joinBtn = document.getElementById('join-btn');
+            if (activity.status === 'available') {
+                joinBtn.textContent = '立即报名';
+                joinBtn.className = 'btn btn-primary';
+                joinBtn.onclick = () => showJoinModal(activity);
+            } else if (activity.status === 'full') {
+                joinBtn.textContent = '名额已满';
+                joinBtn.className = 'btn btn-secondary';
+                joinBtn.onclick = null;
+            } else {
+                joinBtn.textContent = '活动已结束';
+                joinBtn.className = 'btn btn-secondary';
+                joinBtn.onclick = null;
+            }
+            
+            // 切换到活动详情页
+            switchPage('activity-detail');
+        }
+        
+        // 显示报名弹窗
+        function showJoinModal(activity) {
+            const modal = document.getElementById('join-modal');
+            const infoContainer = document.getElementById('join-activity-info');
+            
+            infoContainer.innerHTML = `
+                <h4 style="font-size: 14px; font-weight: 600; color: var(--green-dark); margin-bottom: 12px;">${activity.title}</h4>
+                <p style="color: #4a5568; margin-bottom: 6px; font-size: 12px;">时间：${activity.date} ${activity.time}</p>
+                <p style="color: #4a5568; margin-bottom: 12px; font-size: 12px;">费用：${activity.cost}</p>
+                <p style="font-size: 11px; color: #718096;">报名后请及时完成支付</p>
+            `;
+            
+            modal.classList.add('active');
+        }
+        
+        // 关闭报名弹窗
+        function closeJoinModal() {
+            document.getElementById('join-modal').classList.remove('active');
+        }
+        
+        // 确认支付
+        function confirmPayment() {
+            if (currentActivity) {
+                // 更新活动报名人数（同时更新master list和当前分页数据）
+                const masterActivity = activitiesMasterList.find(a => a.id === currentActivity.id);
+                if (masterActivity) {
+                    masterActivity.currentParticipants++;
+                    if (masterActivity.currentParticipants >= masterActivity.maxParticipants) {
+                        masterActivity.status = 'full';
+                    }
+                    
+                    // 添加到已报名列表
+                    masterActivity.registeredMembers.push({
+                        name: currentUser.name,
+                        avatar: currentUser.name.charAt(0)
+                    });
+                }
+                
+                // 更新当前活动对象
+                currentActivity.currentParticipants++;
+                if (currentActivity.currentParticipants >= currentActivity.maxParticipants) {
+                    currentActivity.status = 'full';
+                }
+                currentActivity.registeredMembers.push({
+                    name: currentUser.name,
+                    avatar: currentUser.name.charAt(0)
+                });
+                
+                closeJoinModal();
+                alert('报名成功！请保存好支付截图作为凭证。');
+                
+                // 刷新当前页面
+                if (document.getElementById('community-page').classList.contains('active')) {
+                    loadActivityList();
+                } else if (document.getElementById('activity-detail-page').classList.contains('active')) {
+                    showActivityDetail(currentActivity.id);
+                }
+            }
+        }
+        
+        // 显示手机号登录
+        function showPhoneLogin() {
+            document.getElementById('phone-login-modal').classList.add('active');
+        }
+        
+        // 关闭手机号登录
+        function closePhoneLogin() {
+            document.getElementById('phone-login-modal').classList.remove('active');
+        }
+        
+        // 手机号登录
+        function phoneLogin() {
+            const phone = document.getElementById('phone-input').value;
+            const code = document.getElementById('code-input').value;
+            
+            if (!phone || !code) {
+                alert('请填写完整信息');
+                return;
+            }
+            
+            // Mock登录逻辑
+            currentUser.phone = phone;
+            closePhoneLogin();
+            loginSuccess();
+        }
+        
+        // 微信登录
+        function loginWithWeChat() {
+            // Mock微信登录逻辑
+            loginSuccess();
+        }
+        
+        // 登录成功
+        function loginSuccess() {
+            console.log('=== 登录成功处理开始 ===');
+            
+            // 隐藏登录页，显示社团主页
+            const loginPage = document.getElementById('login-page');
+            const communityPage = document.getElementById('community-page');
+            
+            if (loginPage) {
+                loginPage.classList.remove('active');
+                console.log('已隐藏登录页');
+            } else {
+                console.error('找不到登录页元素');
+            }
+            
+            if (communityPage) {
+                communityPage.classList.add('active');
+                console.log('已显示社团主页');
+            } else {
+                console.error('找不到社团主页元素');
+            }
+            
+            // 加载社团数据
+            console.log('开始加载社团数据');
+            loadCommunityData();
+            
+            // 显示底部导航栏
+            const appContainer = document.querySelector('.app-container');
+            if (appContainer) {
+                appContainer.classList.remove('hide-nav');
+                console.log('已显示底部导航');
+            } else {
+                console.error('找不到.app-container元素');
+            }
+            
+            // 更新底部导航 - 保持当前导航状态，不强制设置第一个
+            const navItems = document.querySelectorAll('.nav-item');
+            if (navItems.length === 0) {
+                console.error('找不到导航项');
+            }
+            
+            console.log('=== 登录成功处理完成 ===');
+        }
+        
+        // 加载个人页面数据
+        function loadProfileData() {
+            // 加载已报名活动
+            const joinedContainer = document.getElementById('joined-activities');
+            const joinedActivities = activitiesMasterList.filter(a => 
+                a.registeredMembers.some(m => m.name === currentUser.name)
+            );
+            
+            if (joinedActivities.length === 0) {
+                joinedContainer.innerHTML = '<div class="empty-state"><span>📅</span><p>暂无已报名活动</p></div>';
+            } else {
+                joinedContainer.innerHTML = joinedActivities.map(activity => `
+                    <div style="padding: 8px; border: 1px solid #f0f0f0; border-radius: 4px; margin-bottom: 6px; cursor: pointer;" 
+                         onclick="showActivityDetail(${activity.id})">
+                        <div style="font-weight: 500; color: #2d3748; margin-bottom: 2px; font-size: 12px;">${activity.title}</div>
+                        <div style="font-size: 11px; color: #718096;">${activity.date} ${activity.time}</div>
+                    </div>
+                `).join('');
+            }
+            
+            // 加载已发布活动（仅管理员/领队可见）
+            const publishedContainer = document.getElementById('published-activities');
+            if (currentUser.role === 'admin' || currentUser.role === 'leader') {
+                const publishedActivities = activitiesMasterList.filter(a => a.organizer.name === currentUser.name);
+                if (publishedActivities.length === 0) {
+                    publishedContainer.innerHTML = '<div class="empty-state"><span>📋</span><p>暂无已发布活动</p></div>';
+                } else {
+                    publishedContainer.innerHTML = publishedActivities.map(activity => `
+                        <div style="padding: 8px; border: 1px solid #f0f0f0; border-radius: 4px; margin-bottom: 6px; cursor: pointer;" 
+                             onclick="showActivityDetail(${activity.id})">
+                            <div style="font-weight: 500; color: #2d3748; margin-bottom: 2px; font-size: 12px;">${activity.title}</div>
+                            <div style="font-size: 11px; color: #718096;">${activity.date} ${activity.time}</div>
+                        </div>
+                    `).join('');
+                }
+            } else {
+                publishedContainer.innerHTML = '<div style="padding: 8px; text-align: center; color: #a0aec0; font-size: 11px;">仅管理员和领队可发布活动</div>';
+            }
+        }
+        
+        // 加载广场数据
+        function loadSquareData() {
+            const container = document.getElementById('square-content');
+            
+            // 模拟广场内容数据 - 增加更多内容条
+            const squarePosts = [
+                {
+                    id: 1,
+                    author: '张三',
+                    avatar: '张',
+                    content: '今天参加了轻野徒步社的登山活动，感受到了大自然的魅力！山风景美不胜收，空气清新，让人身心愉悦。',
+                    images: [],
+                    time: '2小时前',
+                    likes: 12,
+                    comments: 3
+                },
+                {
+                    id: 2,
+                    author: '李四',
+                    avatar: '李',
+                    content: '分享几张今天拍的照片，都是在大自然中记录下的美好瞬间。希望下次还能和伙伴们一起徒步！',
+                    images: ['photo1.jpg', 'photo2.jpg'],
+                    time: '4小时前',
+                    likes: 8,
+                    comments: 2
+                },
+                {
+                    id: 3,
+                    author: '王五',
+                    avatar: '王',
+                    content: '新手友好路线，适合刚加入的伙伴们。虽然路程不长，但风景很棒，团队氛围也非常好！',
+                    images: [],
+                    time: '昨天',
+                    likes: 15,
+                    comments: 5
+                },
+                {
+                    id: 4,
+                    author: '赵六',
+                    avatar: '赵',
+                    content: '周末的徒步活动真是太棒了！认识了很多新朋友，大家一起分享徒步经验，收获满满。',
+                    images: ['photo3.jpg'],
+                    time: '昨天',
+                    likes: 10,
+                    comments: 4
+                },
+                {
+                    id: 5,
+                    author: '孙七',
+                    avatar: '孙',
+                    content: '第一次参加轻野的活动，领队非常专业，路线安排合理，期待下次的活动！',
+                    images: [],
+                    time: '2天前',
+                    likes: 7,
+                    comments: 3
+                },
+                {
+                    id: 6,
+                    author: '周八',
+                    avatar: '周',
+                    content: '今天天气特别好，适合徒步。山上的风景让人心旷神怡，推荐大家都来参加！',
+                    images: ['photo4.jpg', 'photo5.jpg'],
+                    time: '2天前',
+                    likes: 18,
+                    comments: 6
+                },
+                {
+                    id: 7,
+                    author: '吴九',
+                    avatar: '吴',
+                    content: '轻野徒步社的活动组织得非常好，安全措施到位，适合各个年龄段的参与者。',
+                    images: [],
+                    time: '3天前',
+                    likes: 9,
+                    comments: 2
+                },
+                {
+                    id: 8,
+                    author: '郑十',
+                    avatar: '郑',
+                    content: '今天挑战了难度较高的路线，虽然有点累，但登顶后的成就感无法用言语表达！',
+                    images: ['photo6.jpg'],
+                    time: '3天前',
+                    likes: 14,
+                    comments: 5
+                }
+            ];
+            
+            const html = squarePosts.map(post => `
+                <div class="card" style="margin-bottom: 22px;">
+                    <div style="display: flex; align-items: center; margin-bottom: 12px;">
+                        <div style="width: 36px; height: 36px; border-radius: 50%; background: var(--green-dark); color: white; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 500; margin-right: 10px;">
+                            ${post.avatar}
+                        </div>
+                        <div>
+                            <div style="font-size: 14px; font-weight: 500; color: #2d3748;">${post.author}</div>
+                            <div style="font-size: 11px; color: #718096;">${post.time}</div>
+                        </div>
+                    </div>
+                    <div style="font-size: 14px; color: #2d3748; line-height: 1.5; margin-bottom: 12px;">
+                        ${post.content}
+                    </div>
+                    ${post.images.length > 0 ? `
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px;">
+                            ${post.images.map(img => `<div style="width: 100%; height: 100px; background: #f7fafc; border-radius: 6px; display: flex; align-items: center; justify-content: center; color: #a0aec0; font-size: 12px;">图片</div>`).join('')}
+                        </div>
+                    ` : ''}
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 8px; border-top: 1px solid #f0f0f0;">
+                        <div style="display: flex; gap: 16px;">
+                            <span style="font-size: 12px; color: #718096; cursor: pointer;">点赞 ${post.likes}</span>
+                            <span style="font-size: 12px; color: #718096; cursor: pointer;">评论 ${post.comments}</span>
+                        </div>
+                        <span style="font-size: 12px; color: #718096; cursor: pointer;">分享</span>
+                    </div>
+                </div>
+            `).join('');
+            
+            container.innerHTML = html;
+        }
+        
+        // 显示发布模态框
+        function showPublishModal() {
+            const modal = document.getElementById('publish-modal');
+            if (modal) {
+                modal.classList.add('active');
+            } else {
+                // 如果模态框不存在，创建一个简单的选择
+                const choice = confirm('选择发布内容类型：\n\n确定 = 发布活动\n取消 = 发布图文');
+                if (choice) {
+                    // 发布活动
+                    showFeedback();
+                } else {
+                    // 发布图文
+                    alert('发布图文功能开发中，敬请期待！');
+                }
+            }
+        }
+        
+        // 显示反馈
+        function showFeedback() {
+            alert('功能开发中，敬请期待');
+        }
+        
+        // 退出登录
+        function logout() {
+            if (confirm('确定要退出登录吗？')) {
+                currentUser = null;
+                document.querySelectorAll('.page').forEach(page => {
+                    page.classList.remove('active');
+                });
+                document.getElementById('login-page').classList.add('active');
+                
+                // 隐藏底部导航栏
+                document.querySelector('.app-container').classList.add('hide-nav');
+            }
+        }
+        
+        // 页面初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('=== 页面初始化开始 ===');
+            
+            // 登录页默认隐藏底部导航
+            const appContainer = document.querySelector('.app-container');
+            if (appContainer) {
+                appContainer.classList.add('hide-nav');
+                console.log('已隐藏底部导航');
+            } else {
+                console.error('找不到.app-container元素');
+            }
+            
+            // 检查底部导航栏
+            const bottomNav = document.querySelector('.bottom-nav');
+            if (bottomNav) {
+                console.log('找到底部导航栏');
+                const navItems = bottomNav.querySelectorAll('.nav-item');
+                console.log('找到', navItems.length, '个导航项');
+                const publishBtnNav = bottomNav.querySelector('.publish-btn-nav');
+                if (publishBtnNav) {
+                    console.log('找到导航栏发布按钮');
+                }
+            } else {
+                console.error('找不到底部导航栏');
+            }
+            
+            // 自动登录，直接进入社团主页
+            setTimeout(() => {
+                console.log('=== 执行自动登录 ===');
+                loginWithWeChat();
+            }, 1000);
+        });
+    </script>
+</body>
+</html>

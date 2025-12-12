@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>测试登录页面修复</title>
+</head>
+<body>
+    <h1>登录页面修复测试</h1>
+    <button onclick="testLogin()">测试登录功能</button>
+    <div id="result"></div>
+    
+    <script>
+        function testLogin() {
+            const result = document.getElementById('result');
+            
+            // 模拟测试登录页面CSS
+            const loginPage = document.getElementById('login-page');
+            const communityPage = document.getElementById('community-page');
+            
+            if (loginPage && communityPage) {
+                result.innerHTML = '✓ 登录页面和社区页面元素都存在';
+                
+                // 测试CSS类切换
+                loginPage.classList.remove('active');
+                communityPage.classList.add('active');
+                
+                result.innerHTML += '<br>✓ CSS类切换测试通过';
+                
+                // 检查页面显示状态
+                const loginDisplay = window.getComputedStyle(loginPage).display;
+                const communityDisplay = window.getComputedStyle(communityPage).display;
+                
+                result.innerHTML += `<br>✓ 登录页面display: ${loginDisplay}`;
+                result.innerHTML += `<br>✓ 社区页面display: ${communityDisplay}`;
+                
+                if (loginDisplay === 'none' && communityDisplay === 'block') {
+                    result.innerHTML += '<br><strong style="color: green;">✓ 修复成功！页面切换正常工作</strong>';
+                } else {
+                    result.innerHTML += '<br><strong style="color: red;">✗ 修复失败，页面显示异常</strong>';
+                }
+            } else {
+                result.innerHTML = '✗ 页面元素不存在';
+            }
+        }
+        
+        // 自动测试
+        window.onload = function() {
+            testLogin();
+        };
+    </script>
+</body>
+</html>
